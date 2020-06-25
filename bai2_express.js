@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 const port = 3000;
 const pug = require('pug');
+app.set('view engine', 'pug')
+app.set('views', './views')
 
 app.get("/", (req, res) => {
-    res.send("Hello coderX");
+    res.render("index");
 });
 
 app.get("/users", (req, res) => {
