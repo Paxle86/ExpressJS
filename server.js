@@ -6,24 +6,26 @@ app.set('view engine', 'pug')
 app.set('views', './views')
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
 
-var todos = [
-    {id: 1, title: 'Nấu cơm'},
-    {id: 2, title: 'Rửa bát'},
-    {id: 3, title: 'Học code tại coderX'} 
- ]
+const adapter = new FileSync('db.json')
+const db = low(adapter)
+db.defaults({ todos: []})
+  .write()
+
 app.get("/", (req, res) => {
     res.render("index.pug", {name: 'Thanh'});
 });
 
 app.get("/todos", (req, res) => {
     res.render("todos.pug", {
-        todos: todos
+        todos: db.get('todos').value()
     });
 });
 app.get("/todos/search", (req, res) => {
     var q = req.query.q
-    var matchSearch = todos.filter(function(todo) {
+    var matchSearch = db.get('todos').value().filter(function(todo) {
         return todo.title.toLowerCase().indexOf(q.toLowerCase()) !== -1
     })
     
@@ -35,7 +37,7 @@ app.get('/todos/create', (req,res) => {
     res.render('create.pug')
 })
 app.post('/todos/create', (req,res) => {
-    todos.push(req.body)
+    db.get('todos').push(req.body).write()
     res.redirect('/todos')
 })
 
