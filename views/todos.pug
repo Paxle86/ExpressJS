@@ -1,0 +1,10 @@
+h1 todo list
+form(action='/todos/search', method="GET")
+    input(type="text", name="q")
+    
+    button Search
+ul  
+    each todo in todos
+        li=todo.title
+form(action="/todos/create")
+    button New
